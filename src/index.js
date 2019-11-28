@@ -12,9 +12,26 @@ const driver = new webdriver.Builder()
 (async () => {
     await driver.get('http://localhost:7777');
 
-    await new Promise((resolve) => {
-        setTimeout(resolve, 3000);
-    });
+    try {
+        const transitionBox = await driver.findElement(webdriver.By.css('.transition'));
+
+        const Emitter = require('./event-emitter');
+        const Timer = require('./timer');
+
+        const result = await driver.executeAsyncScript(`
+            const callback = arguments[arguments.length];
+            console.log(${Emitter});
+            callback(1);
+        `);
+
+        console.log(result);
+
+        await new Promise((resolve) => {
+            setTimeout(resolve, 10000);
+        });
+    } catch (e) {
+        console.log(e);
+    }
 
     await driver.close();
     await driver.quit();
