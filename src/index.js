@@ -15,20 +15,20 @@ const driver = new webdriver.Builder()
     try {
         const transitionBox = await driver.findElement(webdriver.By.css('.transition'));
 
-        const Emitter = require('./event-emitter');
-        const Timer = require('./timer');
+        const result = await driver.executeAsyncScript((target, ) => {
+            const callback = arguments[arguments.length - 1];
+            target.addEventListener('transitionend', () => {
+                callback('transitionend');
+            }, {
+                once: true
+            });
 
-        const result = await driver.executeAsyncScript(`
-            const callback = arguments[arguments.length];
-            console.log(${Emitter});
-            callback(1);
-        `);
+            setTimeout(() => {
+                callback('timeout');
+            }, 1000);
+        }, transitionBox);
 
         console.log(result);
-
-        await new Promise((resolve) => {
-            setTimeout(resolve, 10000);
-        });
     } catch (e) {
         console.log(e);
     }
